@@ -111,4 +111,21 @@ public class LoginController {
         userRepository.save(user);
         return ResponseEntity.ok(new MessageResponse("User registered successfully!"));
     }
+
+    @PostMapping("/fail")
+    public String checkUser(@RequestBody User user) { // login fail
+        return checkErr(user);
+    }
+
+    public String checkErr(User user) {
+        String err = "";
+        if (userRepository.findByUsername(user.getUsername()).isPresent()) {
+            if (userRepository.findByUsernameAndPassword(user.getUsername(), user.getPassword()).isEmpty()) {
+                err = "wrong password";
+            }
+        } else {
+            err = "wrong username";
+        }
+        return err;
+    }
 }
