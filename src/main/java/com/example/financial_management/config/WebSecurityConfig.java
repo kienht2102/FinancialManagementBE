@@ -24,6 +24,7 @@ public class WebSecurityConfig {
 
     @Autowired
     private AuthEntryPointJwt unauthorizedHandler;
+
     @Autowired
     PasswordEncoder passwordEncoder;
     @Bean
