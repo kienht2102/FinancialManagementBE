@@ -9,6 +9,7 @@ import jakarta.persistence.ManyToOne;
 import lombok.Data;
 
 import java.time.LocalDateTime;
+import java.util.Date;
 
 @Data
 @Entity
@@ -19,7 +20,20 @@ public class Output {
     @Column(columnDefinition = "TEXT")
     private String title;
     private long money;
-    private LocalDateTime createAt;
+    private Date createAt;
     @ManyToOne
     private User user;
+    private String expenseType;
+
+    public Output(String title, long money, Date createAt, User user, String expenseType) {
+        this.title = title;
+        this.money = money;
+        this.createAt = createAt;
+        this.user = user;
+        this.expenseType = expenseType;
+    }
+
+    public Output() {
+
+    }
 }

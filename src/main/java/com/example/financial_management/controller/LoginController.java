@@ -2,6 +2,7 @@ package com.example.financial_management.controller;
 
 import com.example.financial_management.config.jwt.JwtUtils;
 import com.example.financial_management.models.ERole;
+import com.example.financial_management.models.Expense;
 import com.example.financial_management.models.Role;
 import com.example.financial_management.models.User;
 import com.example.financial_management.payload.request.LoginRequest;
@@ -10,6 +11,7 @@ import com.example.financial_management.payload.response.JwtResponse;
 import com.example.financial_management.payload.response.MessageResponse;
 import com.example.financial_management.repository.RoleRepository;
 import com.example.financial_management.repository.UserRepository;
+import com.example.financial_management.service.ExpenseServiceImpl;
 import com.example.financial_management.service.UserDetailsImpl;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,6 +23,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -43,10 +46,12 @@ public class LoginController {
     PasswordEncoder encoder;
 
     @Autowired
+    ExpenseServiceImpl expenseService;
+
+    @Autowired
     JwtUtils jwtUtils;
     @PostMapping("/login")
     public ResponseEntity<?> authenticateUser(@Valid @RequestBody LoginRequest loginRequest) {
-
         Authentication authentication = authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(loginRequest.getUsername(), loginRequest.getPassword()));
         SecurityContextHolder.getContext().setAuthentication(authentication);
@@ -108,7 +113,8 @@ public class LoginController {
             });
         }
         user.setRoles(roles);
-        userRepository.save(user);
+        User userSave = userRepository.save(user);
+        expenseService.save(new Expense(userSave,0, new Date()));
         return ResponseEntity.ok(new MessageResponse("User registered successfully!"));
     }
 
