@@ -74,7 +74,6 @@ public class RevenueServiceImpl implements RevenueService{
         calendar.set(Calendar.SECOND, 0);
         calendar.set(Calendar.MILLISECOND, 0);
         Date firstDayOfYear = calendar.getTime();
-
         calendar.set(Calendar.MONTH, Calendar.DECEMBER);
         calendar.set(Calendar.DAY_OF_MONTH, 31);
         calendar.set(Calendar.HOUR_OF_DAY, 23);
@@ -82,7 +81,6 @@ public class RevenueServiceImpl implements RevenueService{
         calendar.set(Calendar.SECOND, 59);
         calendar.set(Calendar.MILLISECOND, 999);
         Date lastDayOfYear = calendar.getTime();
-
         return revenueRepository.findAllByUserAndMonthBetween(user, firstDayOfYear, lastDayOfYear);
     }
     @Override

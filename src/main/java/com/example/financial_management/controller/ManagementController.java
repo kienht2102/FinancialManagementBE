@@ -10,9 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.Calendar;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
 
 
 @CrossOrigin(origins = "*", maxAge = 3600)
@@ -75,6 +73,11 @@ public class ManagementController {
     public List<Output> allOutput() {
         User principal = userDetailsService.getLoggedInUser().get();
         return outputService.findByUser(principal);
+    }
+    @GetMapping("/inputType")
+    @PreAuthorize("hasAnyRole('USER', 'MODERATOR', 'ADMIN')")
+    public List<String> getInputType() {
+        return Arrays.asList("Lương", "Thưởng", "Lãi Xuất", "Thu nhập khác");
     }
 
     @GetMapping("/all/category")
