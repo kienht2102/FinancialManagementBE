@@ -60,6 +60,34 @@ public class ManagementController {
         Output output = new Output(outputRequest.getTitle(), outputRequest.getMoney(), new Date(), principal, outputRequest.getExpenseType());
         return outputService.save(output);
     }
+    @PostMapping("/outputEdit")
+    @PreAuthorize("hasAnyRole('USER') or hasAnyRole('MODERATOR') or hasAnyRole('ADMIN')")
+    public Output outputEdit(@RequestBody Output output) {
+        Expense expense = expenseService.findByLoggedInUser();
+        long totalAmount = expense.getTotalAmount();
+        Output output1 = outputService.findById(output.getId());
+        totalAmount += output1.getMoney();
+        totalAmount -= output.getMoney();
+        expense.setTotalAmount(totalAmount);
+        output.setCreateAt(output1.getCreateAt());
+        output.setUser(output1.getUser());
+        expenseService.save(expense);
+        return outputService.save(output);
+    }
+    @PostMapping("/inputEdit")
+    @PreAuthorize("hasAnyRole('USER') or hasAnyRole('MODERATOR') or hasAnyRole('ADMIN')")
+    public Input inputEdit(@RequestBody Input input) {
+        Expense expense = expenseService.findByLoggedInUser();
+        long totalAmount = expense.getTotalAmount();
+        Input input1 = inputService.findById(input.getId());
+        totalAmount -= input1.getMoney();
+        totalAmount += input.getMoney();
+        expense.setTotalAmount(totalAmount);
+        input.setCreateAt(input1.getCreateAt());
+        input.setUser(input1.getUser());
+        expenseService.save(expense);
+        return inputService.save(input);
+    }
 
     @GetMapping("/all/input")
     @PreAuthorize("hasAnyRole('USER') or hasAnyRole('MODERATOR') or hasAnyRole('ADMIN')")
@@ -77,7 +105,7 @@ public class ManagementController {
     @GetMapping("/inputType")
     @PreAuthorize("hasAnyRole('USER', 'MODERATOR', 'ADMIN')")
     public List<String> getInputType() {
-        return Arrays.asList("Lương", "Thưởng", "Lãi Xuất", "Thu nhập khác");
+        return Arrays.asList("Lương", "Thưởng", "Lãi Suất", "Thu nhập khác");
     }
 
     @GetMapping("/all/category")
