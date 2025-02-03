@@ -7,6 +7,7 @@ import com.example.financial_management.payload.response.TotalInputResponse;
 import com.example.financial_management.payload.response.TotalOutputResponse;
 import com.example.financial_management.service.*;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
@@ -147,4 +148,29 @@ public class ManagementController {
        User principal = userDetailsService.getLoggedInUser().get();
        return revenueService.getYearlyRevenues(principal);
    }
+   @GetMapping("/delete-input/{inputId}")
+   @PreAuthorize("hasAnyRole('USER') or hasAnyRole('MODERATOR') or hasAnyRole('ADMIN')")
+    public ResponseEntity<?> deleteInput(@PathVariable int inputId){
+       Expense expense = expenseService.findByLoggedInUser();
+       long totalAmount = expense.getTotalAmount();
+       Input input = inputService.findById(inputId);
+       totalAmount -= input.getMoney();
+       expense.setTotalAmount(totalAmount);
+       expenseService.save(expense);
+       inputService.delete(inputId);
+       return ResponseEntity.ok("delete input " +input +"success !");
+   }
+    @GetMapping("/delete-output/{outputId}")
+    @PreAuthorize("hasAnyRole('USER') or hasAnyRole('MODERATOR') or hasAnyRole('ADMIN')")
+    public ResponseEntity<?> deleteOutput(@PathVariable int outputId){
+        Expense expense = expenseService.findByLoggedInUser();
+        long totalAmount = expense.getTotalAmount();
+        Output output = outputService.findById(outputId);
+        totalAmount += output.getMoney();
+        expense.setTotalAmount(totalAmount);
+        expenseService.save(expense);
+        outputService.delete(outputId);
+        return ResponseEntity.ok("delete output " +output +"success !");
+    }
+
 }
